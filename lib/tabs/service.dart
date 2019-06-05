@@ -13,15 +13,22 @@ class ThirdTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    
     return WebviewScaffold(
       url: selectedUrl,
       appBar: AppBar(
         title: const Text('our locations'),
       ),
-
+      hidden: true,
+      initialChild: Container(
+        color: Colors.white,
+        child: const Center(
+          child: Text('locate a service center near you.....'),
+        ),
+      ),
       withZoom: false,
-      withLocalStorage: true,
-      hidden: false,
+
       withJavascript: true,
       enableAppScheme: true,
       resizeToAvoidBottomInset:true,

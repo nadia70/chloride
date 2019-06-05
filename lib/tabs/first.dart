@@ -1,41 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:ui';
 
 class FirstTab extends StatelessWidget {
-
-  TextEditingController vendor_code=new TextEditingController();
-  TextEditingController pass=new TextEditingController();
-
-  String msg='';
-
-  Future<List> _verify() async {
-    final response = await http.post("http://chksmart.co.ke/pin.php", body: {
-      "vendor_code": vendor_code.text,
-
-    });
-
-    var datauser = json.decode(response.body);
-
-    if(datauser.length==0){
-      print(() {
-        msg="Login Fail";
-      });
-    }else{
-      if(datauser[0]['id']=='$vendor_code'){
-        print(() {
-          msg="success";
-        });
-      }
-
-
-    }
-
-    return datauser;
-  }
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +27,11 @@ class FirstTab extends StatelessWidget {
 
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
+                    new Form(
+                    key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
 
                         const SizedBox(
                           height: 30.0,
@@ -82,12 +56,15 @@ class FirstTab extends StatelessWidget {
                         ),
                         TextFormField(
                           textCapitalization: TextCapitalization.words,
-                          controller: vendor_code,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                          },
                           decoration: new InputDecoration(
                             border: new OutlineInputBorder(
                               borderRadius: const BorderRadius.all(
                                 const Radius.circular(30.0),
-
                               ),
 
 
@@ -110,8 +87,14 @@ class FirstTab extends StatelessWidget {
                         Center(
                           child: RaisedButton(
                               child: const Text('VERIFY'),
-                              onPressed: (){
-                                _verify();
+                              onPressed:() {
+                                // Validate will return true if the form is valid, or false if
+                                // the form is invalid.
+                                if (_formKey.currentState.validate()) {
+                                  // If the form is valid, we want to show a Snackbar
+                                  Scaffold.of(context)
+                                      .showSnackBar(SnackBar(content: Text('Your product is valid')));
+                                }
                               },
                               color: Colors.red[900], //specify background color for the button here
                               textColor: Colors.white,
@@ -128,9 +111,12 @@ class FirstTab extends StatelessWidget {
                         ),
                       ],
                     ),
+                    ),
+                    ],
 
                   )// TODO: child: _buildContent(),
               ),
+            ),
             ),
           ],
         ),
